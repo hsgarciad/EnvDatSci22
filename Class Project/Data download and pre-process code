@@ -1,0 +1,82 @@
+//This script was created in a Google Earth Engine environment and helps in the pre-processing of Sentinel 2 imagery and computation of the NDVI
+//Define the extension of the study area
+var geometry = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-73.24896539108687, 6.933485185745491],
+          [-73.24896539108687, 6.645753226327006],
+          [-72.86169732468062, 6.645753226327006],
+          [-72.86169732468062, 6.933485185745491]]], null, false);
+
+//In a first attempt I tried to use Planet data from the NICFI Project with a resolution of 
+//4 m per pixel. However, the data source is not working and it is 
+//a Google Engine's issue. I've seen other users having the same error.
+
+//ee.ImageCollection("projects/planet-nicfi/assets/basemaps/americas")
+
+//Therefore I decided to use Sentinel data as shown below
+
+//Download Sentinel 2 data and add a cloud filter of 10%
+
+var Sent_data = ee.ImageCollection("COPERNICUS/S2")
+                     .filterDate("2015-08-01" , "2021-08-31")
+                     //and filter by cloud percentage
+                     .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10));
+    
+//Create a function to compute NDVI and add it as a new band
+var addNDVI = function(image) {
+return image.addBands(image.normalizedDifference(['B8', 'B4']));
+};
+var Sent_data = Sent_data.map(addNDVI);
+
+
+
+// Visualize the data in a chart to get max and min
+var chart =
+    ui.Chart.image
+        .seriesByRegion({
+          imageCollection: Sent_data,
+          band: 'nd',
+          regions: geometry,
+          reducer: ee.Reducer.mean(),
+          scale: 10,
+          seriesProperty: 'label',
+          xProperty: 'system:time_start'
+        })
+        .setOptions({
+          title: 'Average NDVI of the Chicamocha River canyon',
+          hAxis: {title: 'Date', titleTextStyle: {italic: false, bold: true}},
+          vAxis: {
+            title: 'NDVI',
+            titleTextStyle: {italic: false, bold: true}
+          },
+          lineWidth: 3,
+          colors: ['red','black'],
+        });
+print(chart);
+
+// Define visualization parameters
+var band_viz = {
+  min: -0.2,
+  max: 0.6,
+  palette: ['blue','gray', 'brown', 'red', 'orange', 'yellow','green']
+};
+
+// Get the mean NDVI of the Chicamocha River Canyon
+var   mean_NDVI_Chica= Sent_data.select('nd');
+Map.addLayer(mean_NDVI_Chica.mean(), band_viz, 'NDVI Chicamocha River Canyon');
+Map.setCenter(-73.06, 6.73, 11);
+Map.addLayer (geometry,{color: 'white'}, 'AOI');
+
+// Export the mean NDVI image of the Chicamocha River Canyon.
+Export.image.toDrive({
+  image: mean_NDVI_Chica.mean(),
+  description: 'NDVI_chicamocha',
+  scale: 10,
+  region: geometry
+});
