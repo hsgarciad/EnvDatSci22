@@ -1,5 +1,6 @@
-This script contains the steps to download, pre-process, and get the NDVI of the Chicamocha River canyon, the study area I defined. 
-The script, named "Data download and pre-process code", was created on Google Earth Engine and it is based on Java.
+This folder contains the scripts of a class project to map land cover in the Chicamocha River Canyon (Colombian Andes) with the aim of a Random Forest Algorithm.
+
+The script, named "Data download and pre-process code", was created on Google Earth Engine and it is based on Java. This script shows the steps to download, pre-process, and get the NDVI of the Chicamocha River canyon, the study area I defined. 
 
 The second script titled "DataScienceProject_DataCollection.ipynb" shows the following:
 
@@ -7,7 +8,7 @@ Step 1. Mount the G-Drive
 
 Step 2. Install and import a series of functions and modules.
 
-Step 3. Import and conver the raster dataset into arrays.
+Step 3. Import and convert the raster dataset into arrays.
 
 Step 4. Preparation and definition of the predictor and predictand variables. 
 
