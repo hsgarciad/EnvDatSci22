@@ -13,3 +13,9 @@ Step 3. Import and convert the raster dataset into arrays.
 Step 4. Preparation and definition of the predictor and predictand variables. 
 
 Step 5. Train the random forest algorithm, fitting the model to the training data, and get the prediction score.
+
+Step 6. Prepare the prediction of the entire AOI based on the RF model. 
+
+Step 7. Evaluate the accuracy of the prediction.
+
+Step 8. Visualize the predicted map of land cover for the Chicamocha River canyon.
